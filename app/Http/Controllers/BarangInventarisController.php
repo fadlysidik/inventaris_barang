@@ -6,20 +6,21 @@ use Illuminate\Http\Request;
 use App\Models\BarangInventaris;
 use App\Models\JenisBarang;
 use App\Models\Peminjaman;
+use Illuminate\Support\Facades\Auth;
 
 class BarangInventarisController extends Controller
 {
     public function daftarBarang()
     {
-        return view('super-user.barang_inventaris/DBarang');
+        return view('super_user.barang_inventaris/DBarang');
     }
     public function penerimaanBarang()
     {
-        return view('super-user.barang_inventaris.PBarang');
+        return view('super_user.barang_inventaris.PBarang');
     }
     public function laporanBarang()
     {
-        return view('super-user.laporan.laporanBarang');
+        return view('super_user.laporan.laporanBarang');
     }
     public function laporanPeminjaman()
     {
@@ -69,11 +70,11 @@ class BarangInventarisController extends Controller
             BarangInventaris::create([
                 'br_kode' => $br_kode,
                 'jns_brg_kode' => $request->kategori,
-                'user_id' => auth(),
+                'user_id' => Auth::user()->user_id,
                 'br_nama' => $request->nama,
                 'br_tgl_terima' => now(),
                 'br_tgl_entry' => now(),
-                'br_status' => 1,
+                'br_status' => $request->br_status,
             ]);
 
             return redirect()->route('superuser.daftarBarang')->with('success', 'Barang berhasil ditambahkan.');

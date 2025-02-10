@@ -1,237 +1,132 @@
-@extends('layout.SU')
+@extends('layout.su')
 
 @section('content')
-<style>
-/* General Reset */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f9fafb; /* Light gray */
-    color: #333;
-}
+    <main class="p-10 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 min-h-screen">
+        <div class="container mx-auto py-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+                    📌 Daftar Peminjaman
+                </h1>
 
-/* Main Container */
-main {
-    padding: 20px;
-}
+                <!-- Tombol Modal -->
+                <button id="openModalBtn"
+                    class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 rounded-lg shadow-md 
+                    hover:bg-gradient-to-l transform hover:scale-110 transition duration-300 ease-in-out">
+                    ➕ Form Peminjaman
+                </button>
+            </div>
 
-/* Section Title */
-h1, h2 {
-    font-weight: 700;
-    color: #2d3748; /* Gray 800 */
-    margin-bottom: 16px;
-}
-
-h2 {
-    font-size: 1.5rem;
-}
-
-/* Table Styles */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-thead th {
-    background: #4a5568; /* Gray 700 */
-    color: #fff;
-    padding: 12px;
-    text-align: left;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-tbody td {
-    padding: 12px;
-    font-size: 0.875rem;
-    color: #4a5568;
-}
-
-tbody tr {
-    border-bottom: 1px solid #e2e8f0; /* Light gray */
-}
-
-tbody tr:hover {
-    background: #edf2f7; /* Light blue */
-    transition: background-color 0.3s ease-in-out;
-}
-
-/* Buttons */
-button, a {
-    display: inline-block;
-    padding: 10px 16px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-radius: 6px;
-    color: white;
-    background-color: #3182ce; /* Blue 600 */
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-}
-
-button:hover, a:hover {
-    background-color: #2b6cb0; /* Blue 700 */
-}
-
-/* Modal Styles */
-#modalForm {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    visibility: hidden;
-    opacity: 0;
-    transition: all 0.3s ease-in-out;
-}
-
-#modalForm.active {
-    visibility: visible;
-    opacity: 1;
-}
-
-#modalForm .modal-content {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    width: 100%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-#closeModalBtn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    color: #4a5568; /* Gray 700 */
-    cursor: pointer;
-}
-
-#closeModalBtn:hover {
-    color: #2d3748; /* Gray 800 */
-}
-
-/* Input Fields */
-input, select {
-    width: 100%;
-    padding: 10px;
-    font-size: 0.875rem;
-    color: #4a5568;
-    border: 1px solid #cbd5e0; /* Light gray */
-    border-radius: 6px;
-    margin-bottom: 16px;
-    transition: border-color 0.3s;
-}
-
-input:focus, select:focus {
-    border-color: #3182ce; /* Blue 600 */
-    outline: none;
-    box-shadow: 0 0 4px rgba(49, 130, 206, 0.5);
-}
-</style>
-
-<main>
-    <h2>Daftar Peminjaman</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Tanggal Peminjaman</th>
-                <th>No Siswa</th>
-                <th>Nama Siswa</th>
-                <th>Nama Barang</th>
-                <th>Harus Kembali</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($peminjaman as $pinjam)
-                @foreach ($pinjam->peminjamanBarang as $barangPinjam)
-                    <tr>
-                        <td>{{ $pinjam->pb_tgl->format('d-m-Y') }}</td>
-                        <td>{{ $pinjam->siswa->no_siswa }}</td>
-                        <td>{{ $pinjam->siswa->nama_siswa }}</td>
-                        <td>{{ $barangPinjam->barangInventaris->br_nama }}</td>
-                        <td>{{ $pinjam->pb_harus_kembali_tgl->format('d-m-Y') }}</td>
-                        <td>
-                            @if ($pinjam->pb_stat == '01')
-                                <span style="color: green; font-weight: bold;">Aktif</span>
-                            @else
-                                <span style="color: gray; font-weight: bold;">Selesai</span>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            @endforeach
-        </tbody>
-    </table>
-
-    <button id="openModalBtn">Form Peminjaman</button>
-
-    <div id="modalForm">
-        <div class="modal-content">
-            <button id="closeModalBtn">&times;</button>
-            <h2>Form Peminjaman Barang</h2>
-            <form action="{{ route('superuser.simpanPeminjamanBarang') }}" method="POST">
-                @csrf
-                <div>
-                    <label for="siswa_id">Nama Siswa</label>
-                    <select name="siswa_id" id="siswa_id">
-                        @foreach ($siswa as $item)
-                            <option value="{{ $item->siswa_id }}">{{ $item->nama_siswa }}</option>
+            <!-- Daftar Peminjaman -->
+            <div id="daftarPeminjaman" 
+                class="bg-white/60 backdrop-blur-lg shadow-2xl rounded-3xl p-8 mb-8 border border-white/30 transform 
+                hover:scale-105 transition duration-300">
+                <table class="min-w-full bg-white rounded-lg shadow-md overflow-hidden">
+                    <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left">📅 Tanggal</th>
+                            <th class="px-6 py-4 text-left">🎓 No Siswa</th>
+                            <th class="px-6 py-4 text-left">👤 Nama</th>
+                            <th class="px-6 py-4 text-left">📦 Barang</th>
+                            <th class="px-6 py-4 text-left">🔙 Harus Kembali</th>
+                            <th class="px-6 py-4 text-left">📌 Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($peminjaman as $pinjam)
+                            @foreach ($pinjam->peminjamanBarang as $barangPinjam)
+                                <tr class="border-b hover:bg-indigo-50 transition duration-300">
+                                    <td class="px-6 py-4">{{ $pinjam->pb_tgl->format('d-m-Y') }}</td>
+                                    <td class="px-6 py-4">{{ $pinjam->siswa->no_siswa }}</td>
+                                    <td class="px-6 py-4">{{ $pinjam->siswa->nama_siswa }}</td>
+                                    <td class="px-6 py-4">{{ $barangPinjam->barangInventaris->br_nama }}</td>
+                                    <td class="px-6 py-4">{{ $pinjam->pb_harus_kembali_tgl->format('d-m-Y') }}</td>
+                                    <td class="px-6 py-4">
+                                        @if ($pinjam->pb_stat == '1')
+                                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-lg font-semibold">✅ Aktif</span>
+                                        @else
+                                            <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-lg font-semibold">✔️ Selesai</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         @endforeach
-                    </select>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Form Peminjaman -->
+            <div id="modalForm" 
+                class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden transition-opacity duration-300">
+                <div class="bg-white/70 backdrop-blur-md rounded-xl shadow-xl w-full max-w-lg p-8 relative transform transition-all 
+                    duration-500 scale-90 hover:scale-100 border border-white/30">
+                    <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">
+                        ✕
+                    </button>
+
+                    <h2 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">📋 Form Peminjaman</h2>
+
+                    <form action="{{ route('superuser.simpanPeminjamanBarang') }}" method="POST">
+                        @csrf
+                        <div class="mb-6">
+                            <label for="siswa_id" class="block text-lg font-semibold text-gray-700">👩‍🎓 Nama Siswa</label>
+                            <select name="siswa_id" id="siswa_id"
+                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-100">
+                                @foreach ($siswa as $item)
+                                    <option value="{{ $item->siswa_id }}">{{ $item->nama_siswa }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="br_kode" class="block text-lg font-semibold text-gray-700">📦 Barang</label>
+                            <select name="br_kode" id="br_kode"
+                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-100">
+                                @foreach ($barang as $item)
+                                    <option value="{{ $item->br_kode }}">{{ $item->br_nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="pb_tgl" class="block text-lg font-semibold text-gray-700">📅 Tanggal</label>
+                            <input type="date" name="pb_tgl" id="pb_tgl"
+                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-100" required>
+                        </div>
+
+                        <div class="flex justify-center">
+                            <button type="submit"
+                                class="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-full shadow-md 
+                                hover:bg-gradient-to-l transform hover:scale-110 transition duration-300 ease-in-out">
+                                ✅ Pinjam Barang
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <label for="br_kode">Barang</label>
-                    <select name="br_kode" id="br_kode">
-                        @foreach ($barang as $item)
-                            <option value="{{ $item->br_kode }}">{{ $item->br_nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="pb_tgl">Tanggal Peminjaman</label>
-                    <input type="date" name="pb_tgl" id="pb_tgl" required>
-                </div>
-                <button type="submit">Pinjam Barang</button>
-            </form>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<script>
-    const openModalBtn = document.getElementById('openModalBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const modalForm = document.getElementById('modalForm');
+    <script>
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalForm = document.getElementById('modalForm');
 
-    openModalBtn.addEventListener('click', () => {
-        modalForm.classList.add('active');
-    });
+        openModalBtn.addEventListener('click', () => {
+            modalForm.classList.remove('hidden');
+            modalForm.classList.add('opacity-100');
+        });
 
-    closeModalBtn.addEventListener('click', () => {
-        modalForm.classList.remove('active');
-    });
+        closeModalBtn.addEventListener('click', () => {
+            modalForm.classList.add('hidden');
+            modalForm.classList.remove('opacity-100');
+        });
 
-    window.addEventListener('click', (e) => {
-        if (e.target === modalForm) {
-            modalForm.classList.remove('active');
-        }
-    });
-</script>
+        window.addEventListener('click', (e) => {
+            if (e.target === modalForm) {
+                modalForm.classList.add('hidden');
+                modalForm.classList.remove('opacity-100');
+            }
+        });
+    </script>
 @endsection

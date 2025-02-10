@@ -9,7 +9,7 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    public function index()
     {
         return view('auth.login');
     }
